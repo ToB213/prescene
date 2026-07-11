@@ -1,17 +1,20 @@
 use serde::Deserialize;
 
+// Data loaded from the root of a presentation YAML document.
 #[derive(Debug, Deserialize)]
 pub struct Presentation {
     pub presentation: PresentationConfig, // Presentation configuration
     pub slides: Vec<Slide>,               // List of slides
 }
 
+// Dimensions shared by all slides in the presentation.
 #[derive(Debug, Deserialize)]
 pub struct PresentationConfig {
     pub width: u32,  // Width of the presentation
     pub height: u32, // Height of the presentation
 }
 
+// A slide has an identifier and an ordered list of visual nodes.
 #[derive(Debug, Deserialize)]
 pub struct Slide {
     pub id: String,       // Unique identifier for the slide
@@ -20,11 +23,10 @@ pub struct Slide {
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
-// this enum represents different types of nodes that can be present in a slide.
-// Each variant corresponds to a specific type of node, such as text, rectangle, or image.
-// The fields within each variant define the properties of that node type.
+// Serde reads the YAML `type` field and uses it to select the appropriate
+// variant. Each variant then stores its type-specific properties.
 //
-// example of a slide node in the YAML format:
+// Example YAML:
 // type: text
 // id: title
 // x: 100

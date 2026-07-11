@@ -1,18 +1,19 @@
 use crate::model::{Node, Presentation};
 
+// Convert the presentation model into a self-contained HTML document.
 pub fn render_html(presentation: &Presentation) -> String {
     let mut slides_html = String::new();
 
     for slide in &presentation.slides {
-        // collect the HTML for all nodes in the slide
+        // Render nodes in their source order and combine them into one slide.
         let nodes_html = slide
             .nodes
             .iter()
-            .map(render_node) // render each node to HTML
+            .map(render_node)
             .collect::<Vec<_>>()
             .join("\n");
 
-        // wrap the nodes in a slide section
+        // Wrap the nodes in a section that provides their positioning context.
         slides_html.push_str(&format!(
             r#"
             <section class="slide" id="{}">
@@ -24,7 +25,7 @@ pub fn render_html(presentation: &Presentation) -> String {
         ));
     }
 
-    // wrap the slides in a complete HTML document
+    // Use the presentation dimensions as the coordinate system for each slide.
     format!(
         r#"
         <!doctype html>
@@ -81,6 +82,7 @@ pub fn render_html(presentation: &Presentation) -> String {
 }
 
 fn render_node(node: &Node) -> String {
+    // Match every node variant and emit the corresponding HTML element.
     match node {
         Node::Text {
             id,
@@ -139,7 +141,7 @@ fn render_node(node: &Node) -> String {
     }
 }
 
-// Escape HTML special characters in a string to prevent XSS attacks and ensure proper rendering in HTML.
+// Escape text and attribute values before inserting them into generated HTML.
 fn escape_html(value: &str) -> String {
     value
         .replace('&', "&amp;")

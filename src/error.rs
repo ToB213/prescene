@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 use thiserror::Error;
 
+// Application-level errors with enough context to explain which operation
+// failed and which underlying error caused it.
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error("failed to read file `{path}`: {source}")]
