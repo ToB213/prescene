@@ -1,0 +1,51 @@
+presentation:
+  width: 1280
+  height: 720
+
+slides:
+  - id: intro
+    nodes:
+      - type: rect
+        id: title-background
+        x: 60
+        y: 40
+        width: 1160
+        height: 120
+
+      - type: text
+        id: title
+        x: 100
+        y: 70
+        width: 580
+        height: 80
+        content: "Presentation as Scene"
+
+      - type: text
+        id: description
+        x: 100
+        y: 220
+        width: 500
+        height: 250
+        content: |
+          This is a simple example of a presentation as a scene.
+          It shows how to create a presentation using the Prescene framework.
+          The presentation consists of slides, each containing nodes such as text and shapes.
+
+      - type: rect
+        id: diagram
+        x: 700
+        y: 220
+        width: 400
+        height: 250
+  - id: conclusion
+    nodes:
+      - type: text
+        id: conclusion-text
+        x: 100
+        y: 100
+        width: 1080
+        height: 500
+        content: |
+          Thank you for viewing this presentation.
+          We hope you found it informative and engaging.
+          Feel free to explore the Prescene framework further to create your own presentations as scenes.
