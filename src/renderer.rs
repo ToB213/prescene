@@ -1,4 +1,5 @@
 use crate::model::{Node, Presentation};
+use pulldown_cmark::{Options, Parser, html};
 
 // Convert the presentation model into a self-contained HTML document.
 pub fn render_html(presentation: &Presentation) -> String {
@@ -81,6 +82,22 @@ pub fn render_html(presentation: &Presentation) -> String {
     )
 }
 
+fn render_markdown(source: &str) -> String {
+    let mut options = Options::empty();
+
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
+    options.insert(Options::ENABLE_FOOTNOTES);
+
+    let parser = Parser::new_ext(source, options);
+
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+
+    html_output
+}
+
 fn render_node(node: &Node) -> String {
     // Match every node variant and emit the corresponding HTML element.
     match node {
@@ -99,7 +116,7 @@ fn render_node(node: &Node) -> String {
                 y,
                 width,
                 height,
-                escape_html(content)
+                render_markdown(content)
             )
         }
 

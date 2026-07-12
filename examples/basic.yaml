@@ -18,7 +18,7 @@ slides:
         y: 70
         width: 580
         height: 80
-        content: "Presentation as Scene"
+        content: "# Presentation as Scene"
 
       - type: text
         id: description
