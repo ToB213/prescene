@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    padding: 32px;
+    background: #dddddd;
+    font-family: sans-serif;
+}
+
+.slide {
+    position: relative;
+    margin: 0 auto 32px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+}
+
+.node {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+.text-node {
+    overflow: hidden;
+}
+
+.text-node > :first-child {
+    margin-top: 0;
+}
+
+.text-node > :last-child {
+    margin-bottom: 0;
+}
+
+.rect-node {
+    border: 2px solid black;
+}
+
+.image-node {
+    object-fit: contain;
+}

@@ -24,6 +24,9 @@ enum Command {
     Build {
         input: PathBuf,
 
+        #[arg(short = 'c', long = "css")]
+        css_paths: Vec<PathBuf>,
+
         #[arg(short, long, default_value = "output/index.html")]
         output: PathBuf,
     },
@@ -43,12 +46,16 @@ fn main() {
 // Dispatch the selected CLI subcommand to its implementation.
 fn run(cli: Cli) -> Result<(), AppError> {
     match cli.command {
-        Command::Build { input, output } => build(input, output),
+        Command::Build {
+            input,
+            output,
+            css_paths,
+        } => build(input, output, css_paths),
     }
 }
 
 // Build an HTML presentation from a YAML input file.
-fn build(input: PathBuf, output: PathBuf) -> Result<(), AppError> {
+fn build(input: PathBuf, output: PathBuf, css_paths: Vec<PathBuf>) -> Result<(), AppError> {
     // Preserve the input path when adding context to an I/O error.
     let source = fs::read_to_string(&input).map_err(|source| AppError::ReadFile {
         path: input.clone(),
@@ -56,8 +63,9 @@ fn build(input: PathBuf, output: PathBuf) -> Result<(), AppError> {
     })?;
 
     // `?` converts serde_yaml::Error into AppError::ParseYaml via #[from].
-    let presentatoin: Presentation = serde_yaml::from_str(&source)?;
-    let html = renderer::render_html(&presentatoin);
+    let presentation: Presentation = serde_yaml::from_str(&source)?;
+    let custom_css = load_css(&css_paths)?;
+    let html = renderer::render_html(&presentation, &custom_css);
 
     // Create the output directory before writing the generated HTML file.
     if let Some(parent) = output.parent() {
@@ -76,4 +84,21 @@ fn build(input: PathBuf, output: PathBuf) -> Result<(), AppError> {
     println!("generated {}", output.display());
 
     Ok(())
+}
+
+// Read each user-provided stylesheet and combine them in CLI order.
+fn load_css(paths: &[PathBuf]) -> Result<String, AppError> {
+    let mut css = String::new();
+
+    for path in paths {
+        let content = fs::read_to_string(path).map_err(|source| AppError::ReadFile {
+            path: path.clone(),
+            source,
+        })?;
+
+        css.push_str(&content);
+        css.push('\n');
+    }
+
+    Ok(css)
 }

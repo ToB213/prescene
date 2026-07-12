@@ -1,8 +1,10 @@
 use crate::model::{Node, Presentation};
 use pulldown_cmark::{Options, Parser, html};
 
+const DEFAULT_CSS: &str = include_str!("default.css");
+
 // Convert the presentation model into a self-contained HTML document.
-pub fn render_html(presentation: &Presentation) -> String {
+pub fn render_html(presentation: &Presentation, custom_css: &str) -> String {
     let mut slides_html = String::new();
 
     for slide in &presentation.slides {
@@ -37,48 +39,28 @@ pub fn render_html(presentation: &Presentation) -> String {
                 <title>Prescene Presentation</title>
 
                 <style>
-                    body {{
-                        margin: 0;
-                        padding: 32px;
-                        background: #dddddd;
-                        font-family: sans-serif;
-                        }}
+                {default_css}
 
-                    .slide {{
-                        position: relative;
-                        width: {}px;
-                        height: {}px;
-                        margin: 0 auto 32px;
-                        overflow: hidden;
-                        background: white;
-                        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-                    }}
+                .slide {{
+                    width: {width}px;
+                    height: {height}px;
+                }}
 
-                    .node {{
-                        position: absolute;
-                        box-sizing: border-box;
-                    }}
+                {custom_css}
 
-                    .text-node {{
-                        white-space: pre-wrap;
-                    }}
-
-                    .rect-node {{
-                        border: 2px solid black;
-                    }}
-
-                    .image-node {{
-                        object-fit: contain;
-                    }}
                 </style>
             </head>
 
             <body>
-            {}
+            {slides_html}
             </body>
         </html>
     "#,
-        presentation.presentation.width, presentation.presentation.height, slides_html
+        default_css = DEFAULT_CSS,
+        width = presentation.presentation.width,
+        height = presentation.presentation.height,
+        custom_css = custom_css,
+        slides_html = slides_html,
     )
 }
 

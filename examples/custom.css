@@ -1,0 +1,29 @@
+/* Custom theme used to verify external CSS loading. */
+body {
+    background: #e8edf5;
+}
+
+.slide {
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgb(25 45 75 / 18%);
+}
+
+#title-background {
+    background: #dbe8ff;
+    border-color: #315ea8;
+}
+
+#title {
+    color: #183b72;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+#description {
+    color: #27364a;
+    line-height: 1.6;
+}
+
+.rect-node {
+    border-color: #315ea8;
+}
