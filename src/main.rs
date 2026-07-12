@@ -96,6 +96,7 @@ fn load_css(paths: &[PathBuf]) -> Result<String, AppError> {
     Ok(css)
 }
 
+// Read the YAML input file and deserialize it into the presentation model.
 fn load_yaml(path: &Path) -> Result<Presentation, AppError> {
     let source = fs::read_to_string(path).map_err(|source| AppError::ReadFile {
         path: path.to_path_buf(),
