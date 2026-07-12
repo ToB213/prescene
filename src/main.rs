@@ -3,7 +3,7 @@ mod model;
 mod renderer;
 
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 
@@ -56,14 +56,7 @@ fn run(cli: Cli) -> Result<(), AppError> {
 
 // Build an HTML presentation from a YAML input file.
 fn build(input: PathBuf, output: PathBuf, css_paths: Vec<PathBuf>) -> Result<(), AppError> {
-    // Preserve the input path when adding context to an I/O error.
-    let source = fs::read_to_string(&input).map_err(|source| AppError::ReadFile {
-        path: input.clone(),
-        source,
-    })?;
-
-    // `?` converts serde_yaml::Error into AppError::ParseYaml via #[from].
-    let presentation: Presentation = serde_yaml::from_str(&source)?;
+    let presentation = load_yaml(&input)?;
     let custom_css = load_css(&css_paths)?;
     let html = renderer::render_html(&presentation, &custom_css);
 
@@ -101,4 +94,15 @@ fn load_css(paths: &[PathBuf]) -> Result<String, AppError> {
     }
 
     Ok(css)
+}
+
+fn load_yaml(path: &Path) -> Result<Presentation, AppError> {
+    let source = fs::read_to_string(path).map_err(|source| AppError::ReadFile {
+        path: path.to_path_buf(),
+        source,
+    })?;
+
+    let presentation: Presentation = serde_yaml::from_str(&source)?;
+
+    Ok(presentation)
 }
