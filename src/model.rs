@@ -32,6 +32,11 @@ pub struct MarkdownFrontMatter {
     pub css: Vec<PathBuf>, // List of custom CSS file paths
 }
 
+pub struct LoadedDocument {
+    pub presentation: Presentation, // The loaded presentation model
+    pub css_paths: Vec<PathBuf>,    // List of custom CSS file paths
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
 // Serde reads the YAML `type` field and uses it to select the appropriate

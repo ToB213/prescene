@@ -2,7 +2,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::error::AppError;
-use crate::model::{MarkdownFrontMatter, Node, Presentation, PresentationConfig, Slide};
+use crate::model::{
+    LoadedDocument, MarkdownFrontMatter, Node, Presentation, PresentationConfig, Slide,
+};
 
 // Read each user-provided stylesheet and combine them in CLI order.
 pub fn load_css(paths: &[PathBuf]) -> Result<String, AppError> {
@@ -29,19 +31,25 @@ fn load_yaml(path: &Path) -> Result<Presentation, AppError> {
     Ok(presentation)
 }
 
-pub fn load_input(path: &Path) -> Result<(Presentation, Vec<PathBuf>), AppError> {
+pub fn load_input(path: &Path) -> Result<LoadedDocument, AppError> {
     // Keep the existing YAML input path while adding Markdown as a second
     // document format selected by the file extension.
     match path.extension().and_then(|extension| extension.to_str()) {
         Some("md") => load_markdown(path),
-        Some("yaml") | Some("yml") => Ok((load_yaml(path)?, Vec::new())),
-        _ => Ok((load_yaml(path)?, Vec::new())),
+        Some("yaml") | Some("yml") => Ok(LoadedDocument {
+            presentation: load_yaml(path)?,
+            css_paths: Vec::new(),
+        }),
+        _ => Ok(LoadedDocument {
+            presentation: load_yaml(path)?,
+            css_paths: Vec::new(),
+        }),
     }
 }
 
 // Read Markdown front matter, convert each slide into a text node, and resolve
 // CSS paths relative to the Markdown file.
-fn load_markdown(path: &Path) -> Result<(Presentation, Vec<PathBuf>), AppError> {
+fn load_markdown(path: &Path) -> Result<LoadedDocument, AppError> {
     let source = read_text(path)?;
     // Normalize line endings so front matter parsing behaves consistently on
     // files created on different operating systems.
@@ -99,7 +107,10 @@ fn load_markdown(path: &Path) -> Result<(Presentation, Vec<PathBuf>), AppError> 
         slides,
     };
 
-    Ok((presentation, css_paths))
+    Ok(LoadedDocument {
+        presentation,
+        css_paths,
+    })
 }
 
 fn read_text(path: &Path) -> Result<String, AppError> {

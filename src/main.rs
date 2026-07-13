@@ -56,13 +56,13 @@ fn run(cli: Cli) -> Result<(), AppError> {
 
 // Build an HTML presentation from a YAML input file.
 fn build(input: PathBuf, output: PathBuf, cli_css_paths: Vec<PathBuf>) -> Result<(), AppError> {
-    let (presentation, document_css_paths) = input::load_input(&input)?;
+    let document = input::load_input(&input)?;
 
-    let mut css_paths = document_css_paths;
+    let mut css_paths = document.css_paths;
     css_paths.extend(cli_css_paths);
 
     let custom_css = input::load_css(&css_paths)?;
-    let html = renderer::render_html(&presentation, &custom_css);
+    let html = renderer::render_html(&document.presentation, &custom_css);
 
     // Create the output directory before writing the generated HTML file.
     if let Some(parent) = output.parent() {
