@@ -32,6 +32,7 @@ pub struct MarkdownFrontMatter {
     pub css: Vec<PathBuf>, // List of custom CSS file paths
 }
 
+// The loaded document contains the presentation model and any custom CSS paths specified in the input file.
 pub struct LoadedDocument {
     pub presentation: Presentation, // The loaded presentation model
     pub css_paths: Vec<PathBuf>,    // List of custom CSS file paths
