@@ -1,5 +1,5 @@
 mod error;
-mod inputs;
+mod input;
 mod model;
 mod renderer;
 
@@ -56,12 +56,12 @@ fn run(cli: Cli) -> Result<(), AppError> {
 
 // Build an HTML presentation from a YAML input file.
 fn build(input: PathBuf, output: PathBuf, cli_css_paths: Vec<PathBuf>) -> Result<(), AppError> {
-    let (presentation, document_css_paths) = inputs::load_input(&input)?;
+    let (presentation, document_css_paths) = input::load_input(&input)?;
 
     let mut css_paths = document_css_paths;
     css_paths.extend(cli_css_paths);
 
-    let custom_css = inputs::load_css(&css_paths)?;
+    let custom_css = input::load_css(&css_paths)?;
     let html = renderer::render_html(&presentation, &custom_css);
 
     // Create the output directory before writing the generated HTML file.
