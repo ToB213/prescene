@@ -19,4 +19,9 @@ pub enum AppError {
         path: PathBuf,
         source: std::io::Error,
     },
+
+    // Covers malformed Markdown structure, such as missing front matter
+    // delimiters, rather than YAML deserialization failures.
+    #[error("invalid Markdown input: {0}")]
+    InvalidMarkdown(String),
 }

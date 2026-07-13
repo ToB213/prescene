@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use std::path::PathBuf;
 
 // Data loaded from the root of a presentation YAML document.
 #[derive(Debug, Deserialize)]
@@ -19,6 +20,16 @@ pub struct PresentationConfig {
 pub struct Slide {
     pub id: String,       // Unique identifier for the slide
     pub nodes: Vec<Node>, // List of nodes in the slide
+}
+
+// Front matter is a YAML block at the top of a Markdown file that contains metadata about the document. In this case, it specifies the presentation dimensions and optional custom CSS files.
+#[derive(Debug, Deserialize)]
+pub struct MarkdownFrontMatter {
+    pub width: u32,  // Width of the presentation
+    pub height: u32, // Height of the presentation
+
+    #[serde(default)]
+    pub css: Vec<PathBuf>, // List of custom CSS file paths
 }
 
 #[derive(Debug, Deserialize)]
