@@ -1,9 +1,9 @@
 mod error;
 mod input;
 mod model;
+mod output;
 mod renderer;
 
-use std::fs;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
@@ -64,21 +64,7 @@ fn build(input: PathBuf, output: PathBuf, cli_css_paths: Vec<PathBuf>) -> Result
     let custom_css = input::load_css(&css_paths)?;
     let html = renderer::render_html(&document.presentation, &custom_css);
 
-    // Create the output directory before writing the generated HTML file.
-    if let Some(parent) = output.parent() {
-        fs::create_dir_all(parent).map_err(|source| AppError::WriteFile {
-            path: parent.to_path_buf(),
-            source,
-        })?;
-    }
-
-    // Write the final HTML and retain the output path for a useful error.
-    fs::write(&output, html).map_err(|source| AppError::WriteFile {
-        path: output.clone(),
-        source,
-    })?;
-
-    println!("generated {}", output.display());
+    output::write_html(&output, &html)?;
 
     Ok(())
 }
