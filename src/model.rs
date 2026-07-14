@@ -33,48 +33,49 @@ pub struct MarkdownFrontMatter {
 }
 
 // The loaded document contains the presentation model and any custom CSS paths specified in the input file.
+#[derive(Debug, Deserialize)]
 pub struct LoadedDocument {
     pub presentation: Presentation, // The loaded presentation model
     pub css_paths: Vec<PathBuf>,    // List of custom CSS file paths
 }
 
 #[derive(Debug, Deserialize)]
+pub struct NodeBase {
+    pub id: String,           // Unique identifier for the node
+    pub transform: Transform, // Transformation properties for the node
+
+    #[serde(default)]
+    pub classes: Vec<String>, // Optional CSS classes for the node
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Transform {
+    pub x: f32,      // X position of the node
+    pub y: f32,      // Y position of the node
+    pub width: f32,  // Width of the node
+    pub height: f32, // Height of the node
+}
+
+#[derive(Debug, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
 // Serde reads the YAML `type` field and uses it to select the appropriate
 // variant. Each variant then stores its type-specific properties.
-//
-// Example YAML:
-// type: text
-// id: title
-// x: 100
-// y: 80
-// width: 800
-// height: 100
-// content: Hello
 pub enum Node {
-    Text {
-        id: String,      // Unique identifier for the text node
-        x: f32,          // X position of the text node
-        y: f32,          // Y position of the text node
-        width: f32,      // Width of the text node
-        height: f32,     // Height of the text node
+    Markdown {
+        #[serde(flatten)]
+        base: NodeBase, // Common properties for the node
         content: String, // Content of the text node
     },
 
     Rect {
-        id: String,  // Unique identifier for the rectangle node
-        x: f32,      // X position of the rectangle node
-        y: f32,      // Y position of the rectangle node
-        width: f32,  // Width of the rectangle node
-        height: f32, // Height of the rectangle node
+        #[serde(flatten)]
+        base: NodeBase, // Common properties for the node
     },
 
     Image {
-        id: String,  // Unique identifier for the image node
-        x: f32,      // X position of the image node
-        y: f32,      // Y position of the image node
-        width: f32,  // Width of the image node
-        height: f32, // Height of the image node
-        src: String, // Source URL or path of the image
+        #[serde(flatten)]
+        base: NodeBase, // Common properties for the node
+        src: PathBuf,        // Source path of the image file
+        alt: Option<String>, // Optional alt text for the image
     },
 }

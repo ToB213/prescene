@@ -7,25 +7,30 @@ slides:
     nodes:
       - type: rect
         id: title-background
-        x: 60
-        y: 40
-        width: 1160
-        height: 120
+        transform:
+          x: 60
+          y: 40
+          width: 1160
+          height: 120
 
-      - type: text
+      - type: markdown
         id: title
-        x: 100
-        y: 70
-        width: 580
-        height: 80
+        transform:
+          x: 100
+          y: 70
+          width: 580
+          height: 80
+        classes:
+          - title
         content: "# Presentation as Scene"
 
-      - type: text
+      - type: markdown
         id: description
-        x: 100
-        y: 220
-        width: 500
-        height: 250
+        transform:
+          x: 100
+          y: 220
+          width: 500
+          height: 250
         content: |
           This is a simple example of a presentation as a scene.
           It shows how to create a presentation using the Prescene framework.
@@ -33,18 +38,21 @@ slides:
 
       - type: rect
         id: diagram
-        x: 700
-        y: 220
-        width: 400
-        height: 250
+        transform:
+          x: 700
+          y: 220
+          width: 400
+          height: 250
+
   - id: conclusion
     nodes:
-      - type: text
+      - type: markdown
         id: conclusion-text
-        x: 100
-        y: 100
-        width: 1080
-        height: 500
+        transform:
+          x: 100
+          y: 100
+          width: 1080
+          height: 500
         content: |
           Thank you for viewing this presentation.
           We hope you found it informative and engaging.

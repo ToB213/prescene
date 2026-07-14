@@ -3,7 +3,8 @@ use std::path::{Path, PathBuf};
 
 use crate::error::AppError;
 use crate::model::{
-    LoadedDocument, MarkdownFrontMatter, Node, Presentation, PresentationConfig, Slide,
+    LoadedDocument, MarkdownFrontMatter, Node, NodeBase, Presentation, PresentationConfig, Slide,
+    Transform,
 };
 
 // Read each user-provided stylesheet and combine them in CLI order.
@@ -87,12 +88,17 @@ fn load_markdown(path: &Path) -> Result<LoadedDocument, AppError> {
 
             Slide {
                 id: format!("slide-{}", slide_number),
-                nodes: vec![Node::Text {
-                    id: format!("slide-{}-content", slide_number),
-                    x: 80.0,
-                    y: 60.0,
-                    width: front_matter.width as f32 - 160.0,
-                    height: front_matter.height as f32 - 120.0,
+                nodes: vec![Node::Markdown {
+                    base: NodeBase {
+                        id: format!("slide-{}-text", slide_number),
+                        transform: Transform {
+                            x: 0.0,
+                            y: 0.0,
+                            width: front_matter.width as f32,
+                            height: front_matter.height as f32,
+                        },
+                        classes: Vec::new(),
+                    },
                     content,
                 }],
             }

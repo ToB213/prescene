@@ -83,61 +83,63 @@ fn render_markdown(source: &str) -> String {
 fn render_node(node: &Node) -> String {
     // Match every node variant and emit the corresponding HTML element.
     match node {
-        Node::Text {
-            id,
-            x,
-            y,
-            width,
-            height,
-            content,
-        } => {
+        Node::Markdown { base, content } => {
+            let classes = render_classes(&["node", "text-node"], &base.classes);
+
             format!(
-                r#"<div id="{}" class="node text-node" style="left:{}px; top:{}px; width:{}px; height:{}px;">{}</div>"#,
-                escape_html(id),
-                x,
-                y,
-                width,
-                height,
+                r#"<div id="{}" class="{}" style="left:{}px; top:{}px; width:{}px; height:{}px;">{}</div>"#,
+                escape_html(&base.id),
+                classes,
+                base.transform.x,
+                base.transform.y,
+                base.transform.width,
+                base.transform.height,
                 render_markdown(content)
             )
         }
 
-        Node::Rect {
-            id,
-            x,
-            y,
-            width,
-            height,
-        } => {
+        Node::Rect { base } => {
+            let classes = render_classes(&["node", "rect-node"], &base.classes);
+
             format!(
-                r#"<div id="{}" class="node rect-node" style="left:{}px; top:{}px; width:{}px; height:{}px;"></div>"#,
-                escape_html(id),
-                x,
-                y,
-                width,
-                height
+                r#"<div id="{}" class="{}" style="left:{}px; top:{}px; width:{}px; height:{}px;"></div>"#,
+                escape_html(&base.id),
+                classes,
+                base.transform.x,
+                base.transform.y,
+                base.transform.width,
+                base.transform.height
             )
         }
 
-        Node::Image {
-            id,
-            x,
-            y,
-            width,
-            height,
-            src,
-        } => {
+        Node::Image { base, src, alt } => {
+            let classes = render_classes(&["node", "image-node"], &base.classes);
+            let src = src.to_string_lossy();
+            let alt = alt.as_deref().unwrap_or("");
+
             format!(
-                r#"<img id="{}" class="node image-node" src="{}" alt="" style="left:{}px; top:{}px; width:{}px; height:{}px;">"#,
-                escape_html(id),
-                escape_html(src),
-                x,
-                y,
-                width,
-                height
+                r#"<img id="{}" class="{}" src="{}" alt="{}" style="left:{}px; top:{}px; width:{}px; height:{}px;">"#,
+                escape_html(&base.id),
+                classes,
+                escape_html(src.as_ref()),
+                escape_html(alt),
+                base.transform.x,
+                base.transform.y,
+                base.transform.width,
+                base.transform.height
             )
         }
     }
+}
+
+// Combine renderer-provided classes with user-defined classes from the input.
+fn render_classes(base: &[&str], custom: &[String]) -> String {
+    base.iter()
+        .copied()
+        .chain(custom.iter().map(String::as_str))
+        .map(escape_html)
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 // Escape text and attribute values before inserting them into generated HTML.
